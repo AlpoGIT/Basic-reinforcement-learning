@@ -1,36 +1,33 @@
-﻿import numpy as np
+import numpy as np
+from collections import defaultdict
 
-#generate_episode
+#general initialization
+Q = defaultdict(lambda : np.zeros(2))
+N = defaultdict(lambda : np.zeros(2))
+returns_sum = defaultdict(lambda : np.zeros(2))
+
+#Generate an episode (unknown to the agent)
 def generate_episode():
-    s = 0
     episode = []
-    r = 1
-    prob = 0.75
-    while s ==0:
-        a = np.random.rand() > prob
-        s = a*1
-        if s == 1:
-            r = 0
-        episode.append((s,0,r))
+    state = 0
+    while state == 0:
+        episode.append((state,0,1))
+        state = np.random.choice([0,1],p=[0.75,0.25])
+    episode.append((1,0,0))
     return episode
 
-max_episode = 1000
-
-N = np.zeros((2,1))
-returns_sum = np.zeros((2,1))
-Q = np.zeros((2,1))
-
-for i in range(max_episode):
+#First-visit MC algorithm
+for i in range(20000):
     episode = generate_episode()
-    #episode = [(S_t,A_t,R_{t+1}),..., (S_T,A_T,0)]
     states, actions, rewards = zip(*episode)
-    #enumerate successive states
     visited_states = []
     for i, state in enumerate(states):
-        #first-visit MC
         if state not in visited_states:
+            visited_states.append(state)
             N[state][actions[i]] += 1
-            returns_sum[state][actions[i]] += sum(rewards[i:])
+            returns_sum[state][actions[i]] += np.sum(rewards[i:])
             Q[state][actions[i]] = returns_sum[state][actions[i]]/N[state][actions[i]]
-        visited_states.append(state)
-print(Q)
+
+#Print the value of Q(s,a) for s = 0 and a = 0
+#i.e. the expected number of steps before reaching the final states. It should be 4.
+print(Q[0][0])
