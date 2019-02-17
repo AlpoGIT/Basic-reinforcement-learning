@@ -1,6 +1,6 @@
 ﻿import numpy as np
 from collections import defaultdict
-Q = defaultdict(lambda : np.zeros(2))
+Q = defaultdict(lambda : np.zeros(1))
 
 epsilon = 0.05
 alpha = 0.01
@@ -34,7 +34,7 @@ for i in range(50000):
         state = next_state
         if state == 1:
             break
-print(Q[0][0])
+print(dict(Q))
 
 
 
