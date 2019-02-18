@@ -1,5 +1,5 @@
 '''
-("Reinforcement learning", Stutton, example on Maximization bias and double learning)
+("Reinforcement learning", Sutton, example on Maximization bias and double learning)
 Plots the % left actions from state 2 (figure 6.5 of the book)
 States [0,1,2,3]
 Initial state: 2
