@@ -9,7 +9,7 @@ Description from the book:
 The right action transitions immediately to the terminal state with a reward and return of zero.
 The left action transitions to B, also with a reward of zero, from which there are many
 possible actions all of which cause immediate termination with a reward drawn from a
-normal distribution with mean −0.1 and variance 1.0."
+normal distribution with mean -0.1 and variance 1.0."
 '''
 
 import numpy as np
