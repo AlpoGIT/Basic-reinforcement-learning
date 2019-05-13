@@ -124,7 +124,7 @@ for k in range(max_k):
             action = policy.act(state, Q, params)
             next_state, reward, done = env.step(state, action)
 
-            delta = reward+params['gamma']*Q[0].value[next_state][np.argmax(Q[0].value[next_state])]
+            delta = reward+params['gamma']*np.max(Q[0].value[next_state])
             Q[0].value[state][action] += params['alpha']*(delta-Q[0].value[state][action])
 
 
