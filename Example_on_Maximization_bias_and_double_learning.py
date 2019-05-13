@@ -61,7 +61,6 @@ class class_stats():
         self.nb_left_action = np.zeros(self.max_ep)
         self.total = np.zeros(self.max_ep)
 
-
 params = {
     'alpha' : 0.1,
     'epsilon' : 0.1,
@@ -73,7 +72,7 @@ policy = policy()
 stats = class_stats()
 
 max_ep = 300
-max_k = 200
+max_k = 1000
 
 # double Q-learning
 for k in range(max_k):
