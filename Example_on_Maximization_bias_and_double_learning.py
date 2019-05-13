@@ -11,137 +11,137 @@ The left action transitions to B, also with a reward of zero, from which there a
 possible actions all of which cause immediate termination with a reward drawn from a
 normal distribution with mean -0.1 and variance 1.0."
 '''
-
 import numpy as np
+from collections import defaultdict
 import matplotlib.pyplot as plt
 
-epsilon = 0.1
-alpha = 0.1
-gamma = 1.
-
-nb_fork = 10 #possible actions leading to terminal state 0 from state 1
-bias = -.1
-
-n_average = 500   #10000 in the book
-left_dQ = np.zeros(300)
-mean_dQ = np.zeros(300)
-left_Q = np.zeros(300)
-mean_Q = np.zeros(300)
-
-def rargmax(Q1,Q2,state): #returns a uniform random argmax
-    temp = Q1[state]+Q2[state]
-    action = np.random.choice(np.flatnonzero(temp == temp.max()))
-    return action
-
-def action_espilon_greedy(Q1,Q2,state,epsilon): #returns espilon-greedy action
-    if state == 1:
-        action = rargmax(Q1,Q2,state)
+class Q_estimator():
+    def __init__(self):
+        self.nb_actions = 10
+        self.value = {
+                    0 : np.zeros(1),
+                    1 : np.zeros(self.nb_actions),
+                    2 : np.zeros(2),
+                    3 : np.zeros(1)
+                    }
+        
+class policy():
+    def __init__(self):
+        None
+    def act(self, state, Q, params):
+        rd = np.random.uniform(0,1)
+        if rd < params['epsilon']:
+            action = np.random.choice(np.arange(len(Q[0].value[state])))
+        else:
+            action = np.random.choice(np.flatnonzero( Q[0].value[state]+Q[1].value[state]==np.max(Q[0].value[state]+Q[1].value[state]) ))
         return action
 
-    rd = np.random.rand()
-    if rd < epsilon:
-        action = np.random.choice(np.arange(len(Q1[state])))
-    else:
-        action = rargmax(Q1,Q2,state)
-              
-    return action
+class environment():
+    def __init__(self):
+        None
 
-def env(action, state):
-    if state == 1:
-        reward = np.random.normal(bias,1)
-        state = 0
-        return reward, state
-    elif state == 2:
-        state = int(state + 2*action -1)
-        reward = 0
+    def reset(self):
+        state = 2
+        return state
 
-    return reward, state
+    def step(self, state, action):
+        if state == 2:
+            next_state = state + (2*action-1)
+            reward = 0
+            done = True if next_state == 3 else False
+        elif state == 1:
+            next_state = 0
+            reward = np.random.normal(-0.1,1)
+            done = True
+        return next_state, reward, done
 
-#Main loop for Q and double Q learning
-#loop for averaging
-for j in range(n_average):  
-    if j%100 == 0:
-        print("\r{}/{}".format(j,n_average), end = "")
-     
-    #definition of Q matrix
-    Q = {0:np.zeros(1), 1 : np.zeros(nb_fork), 2 : np.zeros(2), 3 : np.zeros(1)} 
-    Q1 = {0:np.zeros(1), 1 : np.zeros(nb_fork), 2 : np.zeros(2), 3 : np.zeros(1)} 
-    Q2 = {0:np.zeros(1), 1 : np.zeros(nb_fork), 2 : np.zeros(2), 3 : np.zeros(1)} 
-    
-    #loop on episodes
-    for i in range(300):
-        #########################
-        ### double Q-learning
-        #########################
-        counter_left_dQ = 0
-        total_action_dQ= 0
-        state = 2 #initial state
-        
+class class_stats():
+    def __init__(self):
+        self.max_ep = 300
+        self.nb_left_action = np.zeros(self.max_ep)
+        self.total = np.zeros(self.max_ep)
+
+
+params = {
+    'alpha' : 0.1,
+    'epsilon' : 0.1,
+    'gamma' : 1
+    }
+
+env = environment()
+policy = policy()
+stats = class_stats()
+
+max_ep = 300
+max_k = 200
+
+# double Q-learning
+for k in range(max_k):
+    Q1 = Q_estimator()
+    Q2 = Q_estimator()
+    Q = [Q1, Q2]
+
+    for i in range(max_ep):
+        state = env.reset()
         while True:
-            #choose A from S using epsilon-greedy in Q1+Q2
-            action = action_espilon_greedy(Q1,Q2,state,epsilon)
-            reward, next_state = env(action, state)
-            
-            #some statistics
-            if state == 2:
-                total_action_dQ += 1
-            if (action == 0) & (state == 2):
-                counter_left_dQ += 1
-                #print("dQ(state, action) = ({},{})".format(state,action))
+            action = policy.act(state, Q, params)
+            next_state, reward, done = env.step(state, action)
 
-            rd = np.random.rand()
+            rd = np.random.uniform(0,1)
 
             if rd < 0.5:
-                Q1[state][action] += alpha*(reward + \
-                    gamma*Q2[next_state][rargmax(Q1,Q1,next_state)]\
-                    -Q1[state][action])
+                delta = reward+params['gamma']*Q[1].value[next_state][np.argmax(Q[0].value[next_state])]
+                Q[0].value[state][action] += params['alpha']*(delta-Q[0].value[state][action])
             else:
-                Q2[state][action] += alpha*(reward + \
-                    gamma*Q1[next_state][rargmax(Q2,Q2,next_state)]\
-                    -Q2[state][action])
+                delta = reward+params['gamma']*Q[0].value[next_state][np.argmax(Q[1].value[next_state])]
+                Q[1].value[state][action] += params['alpha']*(delta-Q[1].value[state][action])
+            
 
-            state = next_state
-            
-            if state in [0,3]: #terminal states
-                left_dQ[i] = counter_left_dQ/total_action_dQ # % left actions ith episode
-                break
-  
-        #########################
-        ### Q-learning
-        #########################
-        counter_left_Q = 0
-        total_action_Q = 0
-        state = 2 #initial state
-        
-        while True:
-            #choose A from S using epsilon-greedy in Q
-            action = action_espilon_greedy(Q,Q,state,epsilon)
-            reward, next_state = env(action, state)
-            
-            #some statistics
+            if action == 0 and state == 2:
+                stats.nb_left_action[i] += 1
             if state == 2:
-                total_action_Q += 1
-            if (action == 0) & (state == 2):
-                counter_left_Q += 1
-           
-            Q[state][action] += alpha*(reward + gamma*np.max(Q[next_state])\
-                        -Q[state][action])
+                stats.total[i] += 1
+
 
             state = next_state
-            if state in [0,3]: #terminal states
-                left_Q[i] = counter_left_Q/total_action_Q # % left actions ith episode
+            if done:
                 break
-    
-    mean_dQ = mean_dQ + left_dQ
-    mean_Q = mean_Q + left_Q
-          
-mean_dQ = mean_dQ/n_average
-mean_Q = mean_Q/n_average
+# plot results
+percentage = np.array([stats.nb_left_action[i]/ stats.total[i] for i in range(max_ep)])
+plt.plot(percentage, label='double Q-learning')
 
-plt.title("Maximization Bias and Double Learning")
-plt.plot(mean_dQ, label = 'Double Q-learning')
-plt.plot(mean_Q, label = 'Q-learning')
-plt.xlabel('Episodes')
-plt.ylabel('% left actions')
+
+
+# Q-learning
+stats = class_stats()
+for k in range(max_k):
+    Q1 = Q_estimator()
+    Q2 = Q1
+    Q = [Q1, Q2]
+
+    for i in range(max_ep):
+        state = env.reset()
+        while True:
+            action = policy.act(state, Q, params)
+            next_state, reward, done = env.step(state, action)
+
+            delta = reward+params['gamma']*Q[0].value[next_state][np.argmax(Q[0].value[next_state])]
+            Q[0].value[state][action] += params['alpha']*(delta-Q[0].value[state][action])
+
+
+            if action == 0 and state == 2:
+                stats.nb_left_action[i] += 1
+            if state == 2:
+                stats.total[i] += 1
+
+
+            state = next_state
+            if done:
+                break
+# plot results
+percentage = np.array([stats.nb_left_action[i]/ stats.total[i] for i in range(max_ep)])
+plt.plot(percentage, label = 'Q-learning')
 plt.legend()
+plt.xlabel('Episodes')
+plt.ylabel('% left actions from A')
 plt.show()
