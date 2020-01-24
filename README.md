@@ -10,6 +10,6 @@ Implementations of basic reinforcement learning algorithm in discrete spaces. Ti
         deep-reinforcement-learning/tile-coding/Tile_Coding.ipynb
       ](https://github.com/udacity/deep-reinforcement-learning/blob/master/tile-coding/Tile_Coding.ipynb)
 
-* Simple k-bandit problem with k=10. The data are averages of 2000 different bandit problems. The algorithm is epsilon greedy with epsilon=0.1.
+* Simple k-bandit problem with k=10. The data are averages of 2000 different bandit problems. The algorithm is epsilon greedy with epsilon in {0, 0.01 , 0.1}. In this case, exploiting all the time (i.e. epsilon=0) is not the optimal solution.
 
 ![bandit problem](bandit_percentage_optimal_actions.png)
