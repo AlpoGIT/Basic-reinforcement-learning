@@ -9,3 +9,7 @@ Implementations of basic reinforcement learning algorithm in discrete spaces. Ti
 * Tile coding. The code solves the MountainCar-v0 environment from [Open Ai Gym](https://gym.openai.com/). After the training, the agent generally solves the problem in "3 moves": right, left, right. In Q-learning with discretized state space, the solution comes in 4 moves (generally, the car bounces against the left boundary). The discretization of the state space is inpired by [
         deep-reinforcement-learning/tile-coding/Tile_Coding.ipynb
       ](https://github.com/udacity/deep-reinforcement-learning/blob/master/tile-coding/Tile_Coding.ipynb)
+
+* Simple k-bandit problem with k=10. The data are averages of 2000 different bandit problems. The algorithm is epsilon greedy with epsilon=0.1.
+
+![bandit problem](bandit_percentage_optimal_actions.png)
