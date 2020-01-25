@@ -12,7 +12,6 @@ class bandit():
         if action == self.best_action:
             self.counter += 1
         self.optimal_actions.append(self.counter)
-
         return np.random.normal(loc=self.means[action], scale=1.0)
 
 class agent():
@@ -32,7 +31,6 @@ class agent():
     def update(self, action, reward):
         self.N[action] += 1
         self.Q[action] += (1/self.N[action])*(reward - self.Q[action])
-
 
 for eps in [0.,0.01,0.1]:
     data = np.zeros(1000)
@@ -56,4 +54,5 @@ for eps in [0.,0.01,0.1]:
     plt.ylabel('$\%$ optimal action')
     plt.xlabel('steps')
     plt.ylim([0,100])
+    print('\r eps={}\t{}/{}'.format(eps,i,i_max), end='\n')
 plt.show()
