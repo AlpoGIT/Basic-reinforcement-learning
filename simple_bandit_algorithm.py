@@ -38,7 +38,6 @@ for eps in [0.,0.01,0.1]:
     for i in np.arange(i_max):
         if i%100 == 0:
             print('\r eps={}\t{}/{}'.format(eps,i,i_max), end='')
-        local = []
         #reset agent and env
         my_agent = agent(epsilon=eps, k=10)
         env = bandit(k=10)
@@ -46,7 +45,7 @@ for eps in [0.,0.01,0.1]:
             action = my_agent.act()
             reward = env.rewards(action)
             my_agent.update(action, reward)
-        local = [env.optimal_actions[i]/(i+1) for i in np.arange(len(env.optimal_actions))]
+        local = list(env.optimal_actions[i]/(i+1) for i in np.arange(len(env.optimal_actions)))
         data += np.array(local)
 
     plt.plot(100*np.array(data)/i_max, label='$\epsilon=${}'.format(eps))
