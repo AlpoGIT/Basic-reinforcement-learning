@@ -13,3 +13,7 @@ Implementations of basic reinforcement learning algorithm in discrete spaces. Ti
 * Simple k-bandit problem with k=10. The data are averages of 2000 different bandit problems. The algorithm is epsilon greedy with epsilon in {0, 0.01 , 0.1}. In this case, exploiting all the time (i.e. epsilon=0) is not the optimal solution. See Sutton&Barto chap.2 for details on the trade-off explore/exploit on the k-bandit problem.
 
 ![bandit problem](bandit_percentage_optimal_actions.png)
+
+* Optimistic initial values. The idea is to "disappoint" the agent at the beginning in order to promote exploration (since any action will decrease the estimate Q(a) of that action, while the value of an unexplored action still remains high). Below, a plot that shows that even with epsilon=0 (i.e. always greedy, meaning always exploiting), the algorithm does enough exploration to "beat" the greedy ones without "optimistic initial values". This plot can be optained by modifying the bandit algorithm. The update step is now \alpha = 0.1 (instead of 1/N(a)).
+
+![Optimistic initial values](optimistic_initial_values.png)
