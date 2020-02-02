@@ -14,6 +14,10 @@ Implementations of basic reinforcement learning algorithm in discrete spaces. Ti
 
 ![bandit problem](bandit_percentage_optimal_actions.png)
 
-* Optimistic initial values. The idea is to "disappoint" the agent at the beginning in order to promote exploration (since any action will decrease the estimate Q(a) of that action, while the value of an unexplored action still remains high). Below, a plot that shows that even with epsilon=0 (i.e. always greedy, meaning always exploiting), the algorithm does enough exploration to "beat" the greedy ones without "optimistic initial values". This plot can be optained by modifying the bandit algorithm. The update step is now \alpha = 0.1 (instead of 1/N(a)).
+* Optimistic initial values. The idea is to "disappoint" the agent at the beginning in order to promote exploration (since any action will decrease the estimate Q(a) of that action, while the value of an unexplored action still remains high). Below, a plot that shows that even with epsilon=0 (i.e. always greedy, meaning always exploiting), the algorithm does enough exploration to "beat" the greedy ones without "optimistic initial values". This plot can be optained by modifying the bandit algorithm. The update step is now \alpha = 0.1 (instead of 1/N(a)). The plot shows the average of 2000 k-bandit problems with k=10.
 
 ![Optimistic initial values](optimistic_initial_values.png)
+
+* Upper-confidence-bound action selection. See Sutton section 2.7. In the k-armed bandit problem, UCB action selection performs well in this type of problems (here, better than an epsilon-greedy action selection). The plot shows the average of 2000 k-bandit problems with k=10.
+
+![UCB](UCB.png)
