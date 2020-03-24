@@ -48,14 +48,14 @@ def loop():
             # planning
             for _ in range(5):
                 s = np.random.choice(observed)
-                a = np.random.choice( action_taken[s])
+                a = np.random.choice(action_taken[s])
                 r, next_s = model[(s,a)]
                 Q[s][a] += alpha*(r + gamma*np.max(Q[next_s]) - Q[s][a])
             
             if done:
                 mean_score.append(total_reward)
                 #if i%200 == 0:
-                #    print('{}'.format(np.mean(mean_score)),end='\n')
+                #    print('{}'.format(np.mean(mean_score)), end='\n')
                 break
 
         if np.mean(mean_score) >= -13.0:
@@ -66,8 +66,8 @@ def loop():
 
 duration = []
 for t in range(5):
-    _, Q, temp = loop()
-    duration.append(np.mean(temp))
+    _, Q, i = loop()
+    duration.append(i)
 print('mean duration:\t', np.mean(duration))
 
 #state = env.reset()
