@@ -21,3 +21,5 @@ Implementations of basic reinforcement learning algorithm in discrete spaces. Ti
 * Upper-confidence-bound action selection. See Sutton section 2.7. In the k-armed bandit problem, UCB action selection performs well in this type of problems (here, better than an epsilon-greedy action selection). The plot shows the average of 2000 k-bandit problems with k=10.
 
 ![UCB](UCB.png)
+
+* Dyna-Q on gym's CliffWalking-v0 environment. Q-learning is used for planning and learning. The environment is 'solved' if average of last 100 episodes is at least -13.0 (optimal). Without planning, it takes 450 episodes, with a 50 step planning, it can be solved on average with 180 episodes. (TO DO: clean the code + graphics)
