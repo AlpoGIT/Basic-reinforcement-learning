@@ -22,4 +22,6 @@ Implementations of basic reinforcement learning algorithm in discrete spaces. Ti
 
 ![UCB](UCB.png)
 
-* Dyna-Q on gym's CliffWalking-v0 environment. Q-learning is used for planning and learning. The environment is 'solved' if average of last 100 episodes is at least -13.0 (optimal). Without planning, it takes 450 episodes, with a 50 step planning, it can be solved on average with 180 episodes. (TO DO: clean the code + graphics)
+* Dyna-Q on gym's CliffWalking-v0 environment. Q-learning is used for planning and learning. The environment is 'solved' if average of last 100 episodes is at least -13.0 (optimal). Without planning, it takes 450 episodes. Below, we plot the episode mean duration (with its standard deviation) of a solved environment as a function of the number of actualization in the "Dyna loop". If this number is zero the algorithm is a pure Q-learning algorithm. Below we see that, the optimal length of the loop for planning is approximatively 10.
+
+![Dyna length](optimal_dyna_length.PNG)
