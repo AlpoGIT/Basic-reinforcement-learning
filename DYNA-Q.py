@@ -2,6 +2,7 @@ import gym
 from collections import defaultdict
 from collections import deque
 import numpy as np
+import matplotlib.pyplot as plt
 
 env = gym.make('CliffWalking-v0')
 
@@ -15,7 +16,7 @@ def agent_action(state, eps, Q):
     else:
         return np.random.choice([0,1,2,3])
 
-def loop():
+def loop(dyna_L):
     Q = defaultdict(lambda : np.zeros(4))
     action_taken = defaultdict(lambda : [])
     mean_score = deque(maxlen=100)
@@ -46,7 +47,7 @@ def loop():
             state = next_state
 
             # planning
-            for _ in range(5):
+            for _ in range(dyna_L):
                 s = np.random.choice(observed)
                 a = np.random.choice(action_taken[s])
                 r, next_s = model[(s,a)]
@@ -64,11 +65,30 @@ def loop():
 
     return mean_score, Q, i
 
+
+mean_duration = []
+error = []
 duration = []
-for t in range(5):
-    _, Q, i = loop()
-    duration.append(i)
-print('mean duration:\t', np.mean(duration))
+dyna_Ls = np.arange(0,20,1)
+for dyna_L in dyna_Ls:
+    print("Dyna length:\t",dyna_L)
+    
+    duration = []
+    for t in range(50):
+        #print('sample no:\t',t+1)
+        _, Q, i = loop(dyna_L)
+        duration.append(i)
+    mean_duration.append(np.mean(duration))
+    error.append(np.std(duration))
+    print('mean duration:\t', np.mean(duration))
+mean_duration = np.array(mean_duration)
+error = np.array(error)
+plt.plot(dyna_Ls,mean_duration)
+plt.fill_between(dyna_Ls, mean_duration-error, mean_duration+error, alpha=0.5)
+plt.xlabel('Dyna Length')
+plt.ylabel('Episode mean duration')
+plt.savefig('Optimal_Dyna_Length.png')
+plt.show()
 
 #state = env.reset()
 #eps = 0.
